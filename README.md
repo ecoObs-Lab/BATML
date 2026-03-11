@@ -1,4 +1,4 @@
-![BATML graphic](https://github.com/ecoObs-Lab/BATML/blob/master/BATML.jpg?raw=true)
+![BATML graphic](https://github.com/ecoObs-Lab/BATML/blob/main/BATML.jpg?raw=true)
 
 # BATML
 Bat calls, bat call handling, bat call analysis and machine learning = BATML
