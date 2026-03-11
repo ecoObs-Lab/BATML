@@ -1,0 +1,15 @@
+{
+  "originHash" : "1b604b91e9dd3cd883e0b09922d6d227411046a86d2f26e138c5bf52ea6c290f",
+  "pins" : [
+    {
+      "identity" : "swift-image",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/koher/swift-image.git",
+      "state" : {
+        "revision" : "36c8a282c6cc75d8f3a6f25057f093f950dced83",
+        "version" : "0.8.0"
+      }
+    }
+  ],
+  "version" : 3
+}
