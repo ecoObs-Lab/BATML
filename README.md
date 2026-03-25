@@ -11,5 +11,5 @@ Swift package: [BatSoundHandling](https://github.com/ecoObs-Lab/BatSoundHandling
 
 The package contains classes to load audio files, create sonagrams, find bat calls and a simple example for an UI showing waveform and sonagram.
 
-## Example application BATML
-Currently work in progress
+## Example application BATMLTool
+Currently work in progress a simple application showing the use of BatSoundHandling in combination with CoreML for sonagram based species identification
