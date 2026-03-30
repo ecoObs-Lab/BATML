@@ -80,6 +80,11 @@ struct ContentView: View {
                     if self.selectedDetection != nil {
                         VStack {
                             HStack {
+                                Button {
+                                    NSWorkspace.shared.activateFileViewerSelecting([self.selectedDetection!.url])
+                                } label: {
+                                    Label("Show in Finder", systemImage: "finder")
+                                }
                                 Text("Found events in \(self.selectedDetection!.detectedObjects.count) blocks of sound")
                                 Stepper("Detection \(idx + 1)", value: $idx, in: 0...self.selectedDetection!.detectedObjects.count-1, step: 1) { _ in
                                 }
