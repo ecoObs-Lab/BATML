@@ -59,7 +59,7 @@ class ObjectDetector {
                     let confidence = observation.confidence
                     let boundingBox = observation.boundingBox
                     
-                    if confidence < 0.8 || label == "Call " { return nil }
+                    if label == "Call" || label == "Parasite" { return nil }
                     
                     return DetectedObject(
                         label: label,
@@ -91,7 +91,7 @@ class ObjectDetector {
             let confidence = observation.confidence
             let boundingBox = observation.boundingBox
             
-            if confidence < confidenceLevel || label != "Feeding" { return nil }
+            if label == "Call" || label == "Parasite" { return nil }
             
             return DetectedObject(
                 label: label,

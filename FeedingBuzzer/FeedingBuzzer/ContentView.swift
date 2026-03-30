@@ -47,12 +47,17 @@ struct ContentView: View {
     @State private var idx = 0
     
     @State private var progress = 0.0
+    @State private var running = false
     
     var body: some View {
         VStack {
-            Image(systemName: "")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
+            if !running {
+                Image(systemName: "globe")
+                    .imageScale(.large)
+                    .foregroundStyle(.tint)
+            } else {
+                ProgressView()
+            }
             Text("Feeding buzz detector!")
             
             Button {
@@ -149,6 +154,7 @@ struct ContentView: View {
             if fileURLs.count < 1 {
                 self.progress = -1.0
             }
+            self.running = true
             for url in fileURLs {
                 Task.detached() {
                     var detectedObjects: Array<DetectionObject> = []
@@ -201,6 +207,7 @@ struct ContentView: View {
             }
             group.notify(queue: DispatchQueue.main) {
                 progress = 0.0
+                self.running = false
             }
         }
     }
@@ -236,6 +243,8 @@ struct ContentView: View {
         let rgbImageFormat = vImage_CGImageFormat( bitsPerComponent: 32, bitsPerPixel: 32 * 3, colorSpace: CGColorSpaceCreateDeviceRGB(), bitmapInfo: CGBitmapInfo(rawValue: kCGBitmapByteOrder32Host.rawValue | CGBitmapInfo.floatComponents.rawValue | CGImageAlphaInfo.none.rawValue))!
         
         if let img = try? destinationBuffer.createCGImage(format: rgbImageFormat) {
+            imgBuffer.data.deallocate()
+            destinationBuffer.data.deallocate()
             return img
         }
         else {
