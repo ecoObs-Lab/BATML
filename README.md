@@ -15,4 +15,7 @@ The package contains classes to load audio files, create sonagrams, find bat cal
 Currently work in progress a simple application showing the use of BatSoundHandling in combination with CoreML for sonagram based species identification
 
 ## Example application FeedingBuzzer
-A small tool built around an object detection model created using CreateML. It is based on a TransferLearning model trained with roughly 100 signals of either feeding buzz or pipistrelle social call. The application loads all sound files within a selected folder, creates sonagrams of the sound files and uses the model to detect possible events of type Feeding or Social. The sound files for training all had a high SNR and 500 kHz samplerate. Using files with low SNR or lower sampling rate will detoriate results.
+A small tool built around an object detection model created using CreateML. It is based on a TransferLearning model trained with roughly 200 signals of either feeding buzz or pipistrelle social call. The application loads all sound files within a selected folder, creates sonagrams of the sound files and uses the model to detect possible events of type Feeding or Social. The sound files for training all had a high SNR and 500 kHz samplerate. Using files with low SNR or lower sampling rate will detoriate results. You can adjust the sonagram settings to improve signal detection.
+
+![BATML graphic](https://github.com/ecoObs-Lab/BATML/blob/main/images/FBMainWindow.png?raw=true)
+![BATML graphic](https://github.com/ecoObs-Lab/BATML/blob/main/images/FBSonaAdjust.png?raw=true)
