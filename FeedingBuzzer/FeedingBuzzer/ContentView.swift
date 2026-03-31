@@ -41,7 +41,16 @@ struct Detections: Identifiable, Hashable  {
 
 struct ContentView: View {
     
+    @Environment(\.openWindow) private var openWindow
+    
+    @AppStorage("callSonaSpread") var callSonaSpread: Double = 1.84
+    @AppStorage("callSonaGain") var callSonaGain: Double = 84
+    @AppStorage("sonaColor") var sonaColorScheme: Int = 5
+    
     private let objDetector = ObjectDetector()
+    
+    @State private var useTransferLearning: Bool = true
+    @State private var fileURLs: Array<URL>?
     @State private var detections: Array<Detections> = []
     @State private var selectedDetection: Detections? = nil
     @State private var idx = 0
@@ -59,13 +68,23 @@ struct ContentView: View {
                 ProgressView()
             }
             Text("Feeding buzz detector!")
-            
-            Button {
-                self.searchFolderTree()
-            } label: {
-                Label("Choose folder", systemImage: "waveform.badge.magnifyingglass")
+            Toggle("Use TransferLearning model", isOn: $useTransferLearning)
+            Text("If transfer learning model is not used, a YOLO based model is used")
+                .font(.footnote)
+            HStack {
+                Button {
+                    self.searchFolderTree()
+                } label: {
+                    Label("Choose folder", systemImage: "waveform.badge.magnifyingglass")
+                }
+                if !(self.fileURLs?.isEmpty ?? true) {
+                    Button {
+                        self.analyseFiles()
+                    } label: {
+                        Label("Re-analyze", systemImage: "waveform.and.magnifyingglass")
+                    }
+                }
             }
-            
             if progress > 0.0 {
                 ProgressView(value: progress)
                     .frame(width: 100)
@@ -85,6 +104,11 @@ struct ContentView: View {
                     if self.selectedDetection != nil {
                         VStack {
                             HStack {
+                                Button {
+                                    openWindow(value: self.selectedDetection!.url)
+                                } label: {
+                                    Label("Adjust sona", systemImage: "slider.horizontal.3")
+                                }
                                 Button {
                                     NSWorkspace.shared.activateFileViewerSelecting([self.selectedDetection!.url])
                                 } label: {
@@ -146,48 +170,56 @@ struct ContentView: View {
         op.canChooseDirectories = true
         
         if op.runModal() == .OK {
-            self.progress = 0
-            self.detections.removeAll()
-            let group = DispatchGroup()
-            let fileURLs = getFiles(directoryURL: op.url!)
-            let progressMax = Double(fileURLs.count)
-            if fileURLs.count < 1 {
-                self.progress = -1.0
-            }
-            self.running = true
-            for url in fileURLs {
-                Task.detached() {
-                    var detectedObjects: Array<DetectionObject> = []
-                    group.enter()
-                    defer {
-                        DispatchQueue.main.async {
-                            progress += 1.0 / progressMax
-                            if !detectedObjects.isEmpty {
-                                let newDetection = Detections(url: url, detectedObjects: detectedObjects)
-                                self.detections.append(newDetection)
-                            }
-                            group.leave()
+            self.fileURLs = getFiles(directoryURL: op.url!)
+            self.analyseFiles()
+        }
+    }
+    
+    private func analyseFiles() {
+        guard let fileURLs = self.fileURLs else { return }
+        self.progress = 0
+        self.detections.removeAll()
+        let group = DispatchGroup()
+        let progressMax = Double(fileURLs.count)
+        if fileURLs.count < 1 {
+            self.progress = 0.0
+        }
+        self.running = true
+        let useTL = self.useTransferLearning
+        for url in fileURLs {
+            Task.detached() {
+                var detectedObjects: Array<DetectionObject> = []
+                group.enter()
+                defer {
+                    DispatchQueue.main.async {
+                        progress += 1.0 / progressMax
+                        if !detectedObjects.isEmpty {
+                            let newDetection = Detections(url: url, detectedObjects: detectedObjects)
+                            self.detections.append(newDetection)
                         }
+                        group.leave()
                     }
+                }
+                
+                if let batRecording = try? BatRecording(audioURL: url), let header = batRecording.soundContainer!.header, header.samplerate >= 384000 {
+                    var currentProcessingFrame = 0
                     
-                    if let batRecording = try? BatRecording(audioURL: url), let header = batRecording.soundContainer!.header, header.samplerate >= 384000 {
-                        var currentProcessingFrame = 0
+                    while currentProcessingFrame < batRecording.soundContainer!.header!.sampleCount {
+                        var sonaStart = currentProcessingFrame
+                        let sonaSize = 250000
                         
-                        while currentProcessingFrame < batRecording.soundContainer!.header!.sampleCount {
-                            var sonaStart = currentProcessingFrame
-                            let sonaSize = 250000
-                            
-                            if sonaStart >= batRecording.soundContainer!.header!.sampleCount { break }
-                            
-                            if sonaStart + sonaSize >= batRecording.soundContainer!.header!.sampleCount {
-                                sonaStart = batRecording.soundContainer!.header!.sampleCount - sonaSize - 1
-                            }
-                            
-                            //let overlap: Float = 0.93 //0.96
-                            
-                            if let sona = batRecording.sonagramImage(from: sonaStart, size: sonaSize, fftParameters: FFTAnalyzer.FFTSettings(fftSize: 1024, overlap: 0.75, window: .hamming), gain: Float(52), spreadFactor: Float(1.84), colorType: .RX) {
-                                if sona.height < 400 { break }
-                                if let singleSona = sona.cropping(to: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: 480, height: 960))), let newSona = self.histoStretchIn(singleSona: singleSona) {
+                        if sonaStart >= batRecording.soundContainer!.header!.sampleCount { break }
+                        
+                        if sonaStart + sonaSize >= batRecording.soundContainer!.header!.sampleCount {
+                            sonaStart = batRecording.soundContainer!.header!.sampleCount - sonaSize - 1
+                        }
+                        
+                        //let overlap: Float = 0.93 //0.96
+                        
+                        if let sona = batRecording.sonagramImage(from: sonaStart, size: sonaSize, fftParameters: FFTAnalyzer.FFTSettings(fftSize: 1024, overlap: 0.75, window: .hamming), gain: Float(self.callSonaGain), spreadFactor: Float(self.callSonaSpread), colorType: FFTAnalyzer.ColorType(rawValue: sonaColorScheme)!) {
+                            if sona.height < 400 { break }
+                            if let singleSona = sona.cropping(to: CGRect(origin: CGPoint(x: 0, y: 0), size: CGSize(width: 480, height: 960))), let newSona = await self.histoStretchIn(singleSona: singleSona) {
+                                if useTL {
                                     if let results = await objDetector.detectFeedingBuzzes(sonaImg: newSona), !results.isEmpty {
                                         let newSonaImage = Image<RGBA<Float>>(cgImage: newSona)
                                         let bitmapRep = NSBitmapImageRep(cgImage: newSonaImage.rotated(byDegrees: -90).cgImage)
@@ -197,18 +229,27 @@ struct ContentView: View {
                                         }
                                     }
                                 }
+                                else {
+                                    if let results = await objDetector.detectFeedingBuzzesYOLO(sonaImg: newSona), !results.isEmpty {
+                                        let newSonaImage = Image<RGBA<Float>>(cgImage: newSona)
+                                        let bitmapRep = NSBitmapImageRep(cgImage: newSonaImage.rotated(byDegrees: -90).cgImage)
+                                        if let data = bitmapRep.representation(using: .jpeg, properties: [:]) {
+                                            let newDetection = DetectionObject(imageData: data, detections: results)
+                                            detectedObjects.append(newDetection)
+                                        }
+                                    }
+                                }
                             }
-                            
-                            currentProcessingFrame += Int(Double(200000) * 0.75)
                         }
-                        
+                        currentProcessingFrame += Int(Double(200000) * 0.75)
                     }
+                    
                 }
             }
-            group.notify(queue: DispatchQueue.main) {
-                progress = 0.0
-                self.running = false
-            }
+        }
+        group.notify(queue: DispatchQueue.main) {
+            progress = 0.0
+            self.running = false
         }
     }
     

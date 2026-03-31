@@ -15,5 +15,9 @@ struct FeedingBuzzerApp: App {
                 .frame(minWidth: 1024, minHeight: 900)
         }
         .defaultSize(CGSize(width: 1280, height: 900))
+        WindowGroup(for: URL.self) {$anURL in
+                    SonaView(soundURL: anURL!)
+                }
+        .defaultSize(CGSize(width: 1024, height: 600))
     }
 }

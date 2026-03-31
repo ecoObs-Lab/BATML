@@ -14,6 +14,10 @@ class ObjectDetector {
     public var detectedObjects: [DetectedObject] = Array()
     private var fbModel = try! FeedingBuzzSocialDetectorTL(configuration: MLModelConfiguration())
     private var visionModel: VNCoreMLModel? = nil
+    
+    private var fbYOLOModel = try! FeedingBuzzSocialDetectorYOLO(configuration: MLModelConfiguration())
+    private var visionYOLOModel: VNCoreMLModel? = nil
+    
     private var requestsFB = [VNRequest]()
     var confidenceLevel: Float = 0.9
     
@@ -28,15 +32,10 @@ class ObjectDetector {
         do {
             let visionModel = try VNCoreMLModel(for: fbModel.model)
             self.visionModel = visionModel
-            let objectRecognition = VNCoreMLRequest(model: visionModel) { request, error in
-                
-                if let results = request.results as? [VNRecognizedObjectObservation] {
-                    self.processResultsFB(results)
-                }
-                
-            }
-            objectRecognition.imageCropAndScaleOption = .scaleFill
-            requestsFB = [objectRecognition]
+            
+            let visionModelYOLO = try VNCoreMLModel(for: fbYOLOModel.model)
+            self.visionYOLOModel = visionModelYOLO
+            
         } catch {
             print("Vision setup error: \(error.localizedDescription)")
         }
@@ -59,7 +58,9 @@ class ObjectDetector {
                     let confidence = observation.confidence
                     let boundingBox = observation.boundingBox
                     
-                    if label == "Call" || label == "Parasite" { return nil }
+                    if label == "Call" || label == "Parasite" {
+                        return nil
+                    }
                     
                     return DetectedObject(
                         label: label,
@@ -75,36 +76,39 @@ class ObjectDetector {
         return nil
     }
     
-    func detectObjectsFB(in image: CGImage) {
-        let handler = VNImageRequestHandler(cgImage: image, orientation: .left)
-        
+    func detectFeedingBuzzesYOLO(sonaImg: CGImage) async -> [DetectedObject]? {
         do {
-            try handler.perform(requestsFB)
-        } catch {
-            print("Detection error: \(error.localizedDescription)")
-        }
-    }
-        
-    private func processResultsFB(_ results: [VNRecognizedObjectObservation]) {
-        let detectedObjects = results.compactMap { observation -> DetectedObject? in
-            let label = observation.labels.first?.identifier ?? "Unknown"
-            let confidence = observation.confidence
-            let boundingBox = observation.boundingBox
+            let model = self.visionYOLOModel!
             
-            if label == "Call" || label == "Parasite" { return nil }
+            let request = VNCoreMLRequest(model: model)
+            request.preferBackgroundProcessing = true
+            request.imageCropAndScaleOption = .scaleFill
             
-            return DetectedObject(
-                label: label,
-                confidence: confidence,
-                boundingBox: boundingBox
-            )
-        }
-        self.detectedObjects = detectedObjects
-        if callback != nil {
-            DispatchQueue.main.async {
-                self.callback!(detectedObjects)
+            let handler = VNImageRequestHandler(cgImage: sonaImg, orientation: .left)
+            try handler.perform([request])
+            
+            if let results = request.results as? [VNRecognizedObjectObservation] {
+                let detectedObjects = results.compactMap { observation -> DetectedObject? in
+                    let label = observation.labels.first?.identifier ?? "Unknown"
+                    let confidence = observation.confidence
+                    let boundingBox = observation.boundingBox
+                    
+                    if label == "Call" || label == "Parasite" {
+                        return nil
+                    }
+                    
+                    return DetectedObject(
+                        label: label,
+                        confidence: confidence,
+                        boundingBox: boundingBox
+                    )
+                }
+                return detectedObjects
             }
+        } catch {
+            print("Vision setup error: \(error.localizedDescription)")
         }
+        return nil
     }
 }
 
