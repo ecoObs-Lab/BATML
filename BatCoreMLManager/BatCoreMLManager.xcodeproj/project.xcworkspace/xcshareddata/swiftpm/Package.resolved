@@ -1,6 +1,15 @@
 {
-  "originHash" : "b4472426852a983c1b80a5d3641fdbfd3361cd81c29c73ef5eaf8dfa63ac3f8e",
+  "originHash" : "e33cf9262b143b002ca199fd6023486291ef77891b37c3835eb45f83cdf54091",
   "pins" : [
+    {
+      "identity" : "batsoundhandling",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/ecoObs-Lab/BatSoundHandling",
+      "state" : {
+        "branch" : "main",
+        "revision" : "1f1531397a4028a436499cf885055ca9d9b2c96d"
+      }
+    },
     {
       "identity" : "swift-image",
       "kind" : "remoteSourceControl",

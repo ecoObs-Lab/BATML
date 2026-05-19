@@ -7,10 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8B51383B2F3E063E00F7D8B1 /* SwiftImage in Frameworks */ = {isa = PBXBuildFile; productRef = 8B5138362F3E063E00F7D8B1 /* SwiftImage */; };
-		8B51383C2F3E063E00F7D8B1 /* BatSoundHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 8B5138382F3E063E00F7D8B1 /* BatSoundHandling */; };
-		8BB4B4EF2F337F6B007E63CD /* SwiftImage in Frameworks */ = {isa = PBXBuildFile; productRef = 8BB4B4EE2F337F6B007E63CD /* SwiftImage */; };
-		8BB4B4F22F337F75007E63CD /* BatSoundHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 8BB4B4F12F337F75007E63CD /* BatSoundHandling */; };
+		8B66163F2FBC3DD900EF4F41 /* BatSoundHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 8B66163E2FBC3DD900EF4F41 /* BatSoundHandling */; };
+		8B6616422FBC3DF800EF4F41 /* BatSoundHandling in Frameworks */ = {isa = PBXBuildFile; productRef = 8B6616412FBC3DF800EF4F41 /* BatSoundHandling */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,8 +29,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8B51383B2F3E063E00F7D8B1 /* SwiftImage in Frameworks */,
-				8B51383C2F3E063E00F7D8B1 /* BatSoundHandling in Frameworks */,
+				8B6616422FBC3DF800EF4F41 /* BatSoundHandling in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -40,18 +37,25 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8BB4B4EF2F337F6B007E63CD /* SwiftImage in Frameworks */,
-				8BB4B4F22F337F75007E63CD /* BatSoundHandling in Frameworks */,
+				8B66163F2FBC3DD900EF4F41 /* BatSoundHandling in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		8B6616402FBC3DF800EF4F41 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		8BB4B4B42F333E23007E63CD = {
 			isa = PBXGroup;
 			children = (
 				8BB4B4BF2F333E23007E63CD /* BatCoreMLManager */,
+				8B6616402FBC3DF800EF4F41 /* Frameworks */,
 				8BB4B4BE2F333E23007E63CD /* Products */,
 			);
 			sourceTree = "<group>";
@@ -85,8 +89,7 @@
 			);
 			name = BatCoreMLViewer;
 			packageProductDependencies = (
-				8B5138362F3E063E00F7D8B1 /* SwiftImage */,
-				8B5138382F3E063E00F7D8B1 /* BatSoundHandling */,
+				8B6616412FBC3DF800EF4F41 /* BatSoundHandling */,
 			);
 			productName = BatCoreMLManager;
 			productReference = 8B5138412F3E063E00F7D8B1 /* BatCoreMLViewer.app */;
@@ -109,8 +112,7 @@
 			);
 			name = BatCoreMLManager;
 			packageProductDependencies = (
-				8BB4B4EE2F337F6B007E63CD /* SwiftImage */,
-				8BB4B4F12F337F75007E63CD /* BatSoundHandling */,
+				8B66163E2FBC3DD900EF4F41 /* BatSoundHandling */,
 			);
 			productName = BatCoreMLManager;
 			productReference = 8BB4B4BD2F333E23007E63CD /* BatCoreMLManager.app */;
@@ -141,8 +143,7 @@
 			mainGroup = 8BB4B4B42F333E23007E63CD;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				8BB4B4ED2F337F6B007E63CD /* XCRemoteSwiftPackageReference "swift-image" */,
-				8BB4B4F02F337F75007E63CD /* XCLocalSwiftPackageReference "../BatSoundHandling" */,
+				8B66163D2FBC3DD900EF4F41 /* XCRemoteSwiftPackageReference "BatSoundHandling" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 8BB4B4BE2F333E23007E63CD /* Products */;
@@ -498,49 +499,26 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCLocalSwiftPackageReference section */
-		8BB4B4F02F337F75007E63CD /* XCLocalSwiftPackageReference "../BatSoundHandling" */ = {
-			isa = XCLocalSwiftPackageReference;
-			relativePath = ../BatSoundHandling;
-		};
-/* End XCLocalSwiftPackageReference section */
-
 /* Begin XCRemoteSwiftPackageReference section */
-		8B5138372F3E063E00F7D8B1 /* XCRemoteSwiftPackageReference "swift-image" */ = {
+		8B66163D2FBC3DD900EF4F41 /* XCRemoteSwiftPackageReference "BatSoundHandling" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/koher/swift-image.git";
+			repositoryURL = "https://github.com/ecoObs-Lab/BatSoundHandling";
 			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.8.0;
-			};
-		};
-		8BB4B4ED2F337F6B007E63CD /* XCRemoteSwiftPackageReference "swift-image" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/koher/swift-image.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.8.0;
+				branch = main;
+				kind = branch;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		8B5138362F3E063E00F7D8B1 /* SwiftImage */ = {
+		8B66163E2FBC3DD900EF4F41 /* BatSoundHandling */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8B5138372F3E063E00F7D8B1 /* XCRemoteSwiftPackageReference "swift-image" */;
-			productName = SwiftImage;
-		};
-		8B5138382F3E063E00F7D8B1 /* BatSoundHandling */ = {
-			isa = XCSwiftPackageProductDependency;
+			package = 8B66163D2FBC3DD900EF4F41 /* XCRemoteSwiftPackageReference "BatSoundHandling" */;
 			productName = BatSoundHandling;
 		};
-		8BB4B4EE2F337F6B007E63CD /* SwiftImage */ = {
+		8B6616412FBC3DF800EF4F41 /* BatSoundHandling */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 8BB4B4ED2F337F6B007E63CD /* XCRemoteSwiftPackageReference "swift-image" */;
-			productName = SwiftImage;
-		};
-		8BB4B4F12F337F75007E63CD /* BatSoundHandling */ = {
-			isa = XCSwiftPackageProductDependency;
+			package = 8B66163D2FBC3DD900EF4F41 /* XCRemoteSwiftPackageReference "BatSoundHandling" */;
 			productName = BatSoundHandling;
 		};
 /* End XCSwiftPackageProductDependency section */
